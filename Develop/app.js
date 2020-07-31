@@ -102,8 +102,9 @@ function promptUser() {
             }
         });
 }
+
 function generateHTML() {
-    fs.writeFile(outputPath, render(employeeArr), function (err) {
+    fs.writeFile(outputPath, render(employeeArr), function(err) {
         if (err) throw err
         console.log("Done");
     })
