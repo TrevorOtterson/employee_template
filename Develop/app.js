@@ -10,7 +10,106 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+let employeeArray = []
 
+function start() {
+    inquirer.prompt(
+        {
+            type: "list",
+            name: "question",
+            message: "Do you want to add new employees?",
+            choices: ["Add Employees", "Done"]
+        })
+
+        .then(function (answer) {
+            if (answer.question === "Add Employees") {
+                promptUser()
+            }
+            else {
+                generateHTML()
+            }
+        })
+}
+
+function promptUser() {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "name",
+            message: "Enter employees name"
+        },
+
+        {
+            type: "input",
+            name: "email",
+            message: "Enter employees email"
+        },
+
+        {
+            type: "input",
+            name: "id",
+            message: "Enter employee id"
+        },
+
+        {
+            type: "list",
+            name: "job",
+            message: "Enter employees job role",
+            choices: ['Engineer', 'Intern', 'Manager']
+        }
+    ])
+        .then(function (answers) {
+            if (answers.job === "Engineer") {
+                inquirer.prompt(
+                    {
+                        type: "input",
+                        name: "github",
+                        message: "Enter employees GitHub username"
+                    })
+
+                    .then(function (engineerAnswer) {
+                        const myEngineer = new Engineer(answers.name, answers.id, answers.email, engineerAnswer.github)
+                        employeeArray.push(myEngineer)
+                        start()
+                    })
+            }
+            else if (answers.job === "Intern") {
+                inquirer.prompt(
+                    {
+                        type: "input",
+                        name: "school",
+                        message: "Enter employees school name"
+                    })
+
+                    .then(function (internAnswer) {
+                        const myIntern = new Intern(answers.name, answers.id, answers.email, internAnswer.school)
+                        employeeArray.push(myIntern)
+                        start()
+                    })
+            }
+            else if (answers.job === "Manager") {
+                inquirer.prompt(
+                    {
+                        type: "input",
+                        name: "officenumber",
+                        message: "Enter in managers office number"
+                    })
+                    .then(function (managerAnswer) {
+                        const myManager = new Manager(answers.name, answers.id, answers.email, managerAnswer.officenumber)
+                        employeeArray.push(myManager)
+                        start()
+                    })
+            }
+        });
+}
+function generateHTML() {
+    fs.writeFile(outputPath, render(employeeArr), function (err) {
+        if (err) throw err
+        console.log("Done");
+    })
+}
+
+start()
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
