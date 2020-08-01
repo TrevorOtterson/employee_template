@@ -8,11 +8,14 @@ const fs = require("fs");
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
+// renders html page when app is ran
 const render = require("./lib/htmlRenderer");
 
+// array for all employee prompt answers to be pushed inside
 let employeeArray = []
 
 function start() {
+    // prompt for stating the application
     inquirer.prompt(
         {
             type: "list",
@@ -21,6 +24,7 @@ function start() {
             choices: ["Add Employees", "Done"]
         })
 
+        // runs questions when 'Add Employees' is selected
         .then(function (answer) {
             if (answer.question === "Add Employees") {
                 promptUser()
@@ -32,6 +36,7 @@ function start() {
 }
 
 function promptUser() {
+    // list of questions for user to fill out
     inquirer.prompt([
         {
             type: "input",
@@ -58,51 +63,57 @@ function promptUser() {
             choices: ['Engineer', 'Intern', 'Manager']
         }
     ])
+        // questions change to "Engineer" prompt when "Engineer" selected
         .then(function (answers) {
             if (answers.job === "Engineer") {
+                // prompt added when job type is selected
                 inquirer.prompt(
                     {
                         type: "input",
                         name: "github",
                         message: "Enter employees GitHub username"
                     })
-
-                    .then(function (engineerAnswer) {
-                        const myEngineer = new Engineer(answers.name, answers.id, answers.email, engineerAnswer.github)
-                        employeeArray.push(myEngineer)
+                    // pushes answers to engineers prompt into the employee array
+                    .then(function (engineerPrompt) {
+                        const bestEngineer = new Engineer(answers.name, answers.id, answers.email, engineerPrompt.github)
+                        employeeArray.push(bestEngineer)
                         start()
                     })
             }
             else if (answers.job === "Intern") {
+                // prompt added when job type is selected
                 inquirer.prompt(
                     {
                         type: "input",
                         name: "school",
                         message: "Enter employees school name"
                     })
-
-                    .then(function (internAnswer) {
-                        const myIntern = new Intern(answers.name, answers.id, answers.email, internAnswer.school)
-                        employeeArray.push(myIntern)
+                    // pushes answers to interns prompt into the employee array
+                    .then(function (internPrompt) {
+                        const bestIntern = new Intern(answers.name, answers.id, answers.email, internPrompt.school)
+                        employeeArray.push(bestIntern)
                         start()
                     })
             }
             else if (answers.job === "Manager") {
+                // prompt added when job type is selected
                 inquirer.prompt(
                     {
                         type: "input",
                         name: "officenumber",
                         message: "Enter in managers office number"
                     })
-                    .then(function (managerAnswer) {
-                        const myManager = new Manager(answers.name, answers.id, answers.email, managerAnswer.officenumber)
-                        employeeArray.push(myManager)
+                    // pushes answers to managers prompt into the employee array    
+                    .then(function (managerPrompt) {
+                        const bestManager = new Manager(answers.name, answers.id, answers.email, managerPrompt.officenumber)
+                        employeeArray.push(bestManager)
                         start()
                     })
             }
         });
 }
 
+// generates new information for HTML when app is ran and prompts are filled out
 function generateHTML() {
     fs.writeFile(outputPath, render(employeeArray), function(err) {
         if (err) throw err
@@ -110,26 +121,5 @@ function generateHTML() {
     })
 }
 
+// starts program when node is ran
 start()
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
