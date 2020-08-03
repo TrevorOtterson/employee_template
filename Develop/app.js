@@ -115,7 +115,7 @@ function promptUser() {
 
 // generates new information for HTML when app is ran and prompts are filled out
 function generateHTML() {
-    fs.writeFile(outputPath, render(employeeArray), function(err) {
+    fs.writeFile(outputPath, render(employeeArray), function (err) {
         if (err) throw err
         console.log("Done");
     })
